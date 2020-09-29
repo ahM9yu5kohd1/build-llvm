@@ -31,28 +31,12 @@ jobs:
         run: |
           brew install ninja
           mkdir build
-          cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="ARM;X86;AArch64" -DCMAKE_INSTALL_PREFIX=install -DPYTHON_EXECUTABLE=`which python3`
+          cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="ARM;X86;AArch64" -DCMAKE_INSTALL_PREFIX="clang+llvm-${{ env.llvm_version }}-${{ runner.os }}" -DPYTHON_EXECUTABLE=`which python3`
           cmake --build build --target install
-          zip clang+llvm-${{ env.llvm_version }}-${{ runner.os }}.zip install
+          tar cjf clang+llvm-${{ env.llvm_version }}-${{ runner.os }}.tar.bz2 clang+llvm-${{ env.llvm_version }}-${{ runner.os }}
           
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./clang+llvm-${{ env.llvm_version }}-${{ runner.os }}.zip
-          asset_name: clang+llvm-${{ env.llvm_version }}-${{ runner.os }}.zip
-          asset_content_type: application/zip
+          name: clang+llvm-${{ env.llvm_version }}-${{ runner.os }}.zip
+          path: clang+llvm-${{ env.llvm_version }}-${{ runner.os }}.zip
