@@ -34,14 +34,11 @@ jobs:
           echo "::set-env name=FILENAME::$FILENAME"
           brew install ninja
           mkdir build
-          #cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="ARM;X86;AArch64" -DCMAKE_INSTALL_PREFIX="$FILENAME" -DPYTHON_EXECUTABLE=`which python3`
-          #cmake --build build --target install
-          mkdir $FILENAME
-          touch $FILENAME/a.txt
-          tar cjf $FILENAME.tar.bz2 $FILENAME
+          cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="ARM;X86;AArch64" -DCMAKE_INSTALL_PREFIX="$FILENAME" -DPYTHON_EXECUTABLE=`which python3`
+          cmake --build build --target install
           
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.FILENAME }}
-          path: ${{ env.FILENAME }}.tar.bz2
+          path: ${{ env.FILENAME }}
