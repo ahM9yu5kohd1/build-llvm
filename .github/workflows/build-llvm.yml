@@ -19,18 +19,16 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - uses: seanmiddleditch/gha-setup-ninja@master
         with:
           repository: 'llvm/llvm-project'
           ref: 'release/10.x'
           fetch-depth: 1
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
-
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
+          brew install ninja
           mkdir build
           cmake -G Ninja -S llvm -B build -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="ARM;X86;AArch64" -DCMAKE_INSTALL_PREFIX=install -DPYTHON_EXECUTABLE=`which python3`
           cmake --build build --target install
