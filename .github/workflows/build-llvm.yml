@@ -38,7 +38,7 @@ jobs:
           #cmake --build build --target install
           mkdir $FILENAME
           touch $FILENAME/a.txt
-          tar cjf $FILENAME.tar.bz2 FILENAME
+          tar cjf $FILENAME.tar.bz2 $FILENAME
           
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
